@@ -1,5 +1,5 @@
 # action.yml
-name: "Wait For Response"
+name: "Wait For HTTP Responses"
 author: "CygnetDigital"
 branding:
   icon: "clock"
