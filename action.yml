@@ -1,33 +1,33 @@
 # action.yml
-name: 'Wait For Response'
-author: 'Justin Knight'
+name: "Wait For Response"
+author: "CygnetDigital"
 branding:
-    icon: 'clock'  
-    color: 'blue'
-description: 'Wait for response code from a URL with timeout'
+  icon: "clock"
+  color: "blue"
+description: "Wait for response code from a URL with timeout"
 inputs:
-    url:
-        description: 'URL to poll'
-        required: false
-        default: 'http://localhost/'
-    responseCode:
-        description: 'Response code to wait for'
-        required: false
-        default: '200'
-    timeout:
-        description: 'Timeout before giving up in ms'
-        required: false
-        default: '30000'
-    interval:
-        description: 'Interval between polling in ms'
-        required: false
-        default: 200
+  url:
+    description: "URL to poll"
+    required: false
+    default: "http://localhost/"
+  responseCode:
+    description: "Response code to wait for"
+    required: false
+    default: "200"
+  timeout:
+    description: "Timeout before giving up in ms"
+    required: false
+    default: "30000"
+  interval:
+    description: "Interval between polling in ms"
+    required: false
+    default: "200"
 outputs:
   result:
-    description: '0 if response code returned within timeout, otherwise 1'
+    description: "0 if response code returned within timeout, otherwise 1"
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
   args:
     - ${{ inputs.url }}
     - ${{ inputs.responseCode }}
