@@ -24,7 +24,7 @@ default: 200
 ## Example usage
 
 ```
-uses: cygnetdigitial/wait_for_response@v2
+uses: cygnetdigital/wait_for_response@v2.0.0
 with:
   url: 'http://localhost:8081/'
   responseCode: '200,500'
