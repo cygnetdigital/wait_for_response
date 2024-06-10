@@ -22,14 +22,15 @@ inputs:
     description: "Interval between polling in ms"
     required: false
     default: "200"
+  username:
+    description: "Basic Auth Username"
+    required: false
+  password:
+    description: "Basic Auth Password"
+    required: false
 outputs:
   result:
     description: "0 if response code returned within timeout, otherwise 1"
 runs:
   using: "docker"
   image: "Dockerfile"
-  args:
-    - ${{ inputs.url }}
-    - ${{ inputs.responseCode }}
-    - ${{ inputs.timeout }}
-    - ${{ inputs.interval }}

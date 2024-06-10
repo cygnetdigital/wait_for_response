@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -11,24 +10,47 @@ import (
 )
 
 func main() {
-	var url = flag.String("url", "http://localhost/", "URL to poll")
-	var responseCode = flag.String("code", "200", "Response code to wait for")
-	var timeout = flag.Int("timeout", 2000, "Timeout before giving up in ms")
-	var interval = flag.Int("interval", 200, "Interval between polling in ms")
-	var localhost = flag.String("localhost", "", "Ip address to use for localhost")
-	flag.Parse()
-
-	fmt.Printf("Polling URL `%s` for response code %s for up to %d ms at %d ms intervals\n", *url, *responseCode, *timeout, *interval)
-	startTime := time.Now()
-	timeoutDuration := time.Duration(*timeout) * time.Millisecond
-	sleepDuration := time.Duration(*interval) * time.Millisecond
-
-	if *localhost!="" && strings.Contains(*url, "localhost") {
-		*url = strings.ReplaceAll(*url, "localhost", *localhost)
+	url := os.Getenv("INPUT_URL")
+	responseCode := os.Getenv("INPUT_RESPONSECODE")
+	timeout, err := strconv.Atoi(os.Getenv("INPUT_TIMEOUT"))
+	if err != nil {
+		fmt.Println("Timeout must be an integer")
+		os.Exit(1)
 	}
+	interval, err := strconv.Atoi(os.Getenv("INPUT_INTERVAL"))
+	if err != nil {
+		fmt.Println("Interval must be an integer")
+		os.Exit(1)
+	}
+	localhost := os.Getenv("INPUT_LOCALHOST")
+
+	username := os.Getenv("INPUT_USERNAME")
+	password := os.Getenv("INPUT_PASSWORD")
+
+	fmt.Printf("Polling URL `%s` as `%s` for response code %s for up to %d ms at %d ms intervals\n", url, username, responseCode, timeout, interval)
+	startTime := time.Now()
+	timeoutDuration := time.Duration(timeout) * time.Millisecond
+	sleepDuration := time.Duration(interval) * time.Millisecond
+
+	if localhost != "" && strings.Contains(url, "localhost") {
+		url = strings.ReplaceAll(url, "localhost", localhost)
+	}
+
+	client := &http.Client{}
+	req, err := http.NewRequest("HEAD", url, nil)
+	if err != nil {
+		fmt.Printf("Request Construction: %v", err)
+	}
+
+	if username != "" && password != "" {
+		req.SetBasicAuth(username, password)
+	}
+
+	codes := strings.Split(responseCode, ",")
+
 	for {
-		res, err := http.Head(*url)
-		if err == nil && containsStr(strings.Split(*responseCode, ","), strconv.Itoa(res.StatusCode)) {
+		res, err := client.Do(req)
+		if err == nil && containsStr(codes, strconv.Itoa(res.StatusCode)) {
 			fmt.Printf("Response header: %v", res)
 			os.Exit(0)
 		}
